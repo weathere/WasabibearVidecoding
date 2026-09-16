@@ -13,8 +13,8 @@ public class ButterMelt : MonoBehaviour
     [Tooltip("融化速度 (縮小 localScale.y 的速度)")]
     [SerializeField] private float meltSpeed = 0.5f;
 
-    [Tooltip("融化後的最小 Y 軸縮放值 (到達此值即停止融化)")]
-    [SerializeField] private float minScaleY = 0.1f;
+    [Tooltip("融化後的最小縮放值 (X, Y, Z 各軸到達此值即停止融化)")]
+    [SerializeField] private Vector3 minScale = new Vector3(1f, 0.1f, 1f);
 
     private bool hasCollided = false;
     private bool isMelting = false;
@@ -51,20 +51,20 @@ public class ButterMelt : MonoBehaviour
 
         // 執行融化縮小
         Vector3 currentScale = transform.localScale;
-        float newScaleY = Mathf.MoveTowards(currentScale.y, minScaleY, meltSpeed * Time.deltaTime);
-        float deltaScaleY = currentScale.y - newScaleY;
+        Vector3 newScale = Vector3.MoveTowards(currentScale, minScale, meltSpeed * Time.deltaTime);
+        float deltaScaleY = currentScale.y - newScale.y;
 
+        // 更新縮放
+        transform.localScale = newScale;
+
+        // 由於預設軸心在中心，向下融化需補償 Y 軸高度差的一半
         if (deltaScaleY > 0f)
         {
-            // 更新縮放
-            transform.localScale = new Vector3(currentScale.x, newScaleY, currentScale.z);
-
-            // 由於預設軸心在中心，向下融化需補償高度差的一半
             transform.position -= new Vector3(0f, deltaScaleY * 0.5f, 0f);
         }
 
-        // 檢查是否已達到融化下限
-        if (Mathf.Approximately(newScaleY, minScaleY))
+        // 檢查各軸是否均已達到融化下限
+        if (transform.localScale == minScale)
         {
             isMelted = true;
         }
