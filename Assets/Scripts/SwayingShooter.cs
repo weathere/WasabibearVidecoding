@@ -15,23 +15,11 @@ public class SwayingShooter : MonoBehaviour
     [Tooltip("擺動速度")]
     [SerializeField] private float swaySpeed = 2f;
 
-    [Header("發射設定")]
-    [Tooltip("要發射的物件預制物 (Prefab)")]
-    [SerializeField] private GameObject projectilePrefab;
-
-    [Tooltip("發射點位置")]
-    [SerializeField] private Transform firePoint;
-
-    [Tooltip("發射間隔時間 (秒)")]
-    [SerializeField] private float fireInterval = 1f;
-
-    private float fireTimer = 0f;
     private float timeElapsed = 0f;
 
     private void Update()
     {
         Sway();
-        HandleFiring();
     }
 
     /// <summary>
@@ -47,31 +35,5 @@ public class SwayingShooter : MonoBehaviour
 
         // 套用旋轉到 Z 軸 (適用於 2D)
         transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
-    }
-
-    /// <summary>
-    /// 處理定時發射邏輯
-    /// </summary>
-    private void HandleFiring()
-    {
-        if (projectilePrefab == null || firePoint == null)
-        {
-            return;
-        }
-
-        fireTimer += Time.deltaTime;
-        if (fireTimer >= fireInterval)
-        {
-            fireTimer = 0f;
-            Shoot();
-        }
-    }
-
-    /// <summary>
-    /// 執行發射
-    /// </summary>
-    private void Shoot()
-    {
-        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
     }
 }
