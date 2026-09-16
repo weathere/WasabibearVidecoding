@@ -13,13 +13,27 @@ public class ButterMelt : MonoBehaviour
     [Tooltip("融化速度 (縮小 localScale.y 的速度)")]
     [SerializeField] private float meltSpeed = 0.5f;
 
-    [Tooltip("融化後的最小縮放值 (X, Y, Z 各軸到達此值即停止融化)")]
-    [SerializeField] private Vector3 minScale = new Vector3(1f, 0.1f, 1f);
+    [Tooltip("融化後的最小縮放值範圍 (最小值)")]
+    [SerializeField] private Vector3 minScaleRangeMin = new Vector3(1f, 0.05f, 1f);
 
+    [Tooltip("融化後的最小縮放值範圍 (最大值)")]
+    [SerializeField] private Vector3 minScaleRangeMax = new Vector3(1f, 0.2f, 1f);
+
+    private Vector3 targetScale;
     private bool hasCollided = false;
     private bool isMelting = false;
     private bool isMelted = false;
     private float timer = 0f;
+
+    private void Start()
+    {
+        // 在設定的範圍內隨機決定各軸融化的目標值
+        targetScale = new Vector3(
+            Random.Range(minScaleRangeMin.x, minScaleRangeMax.x),
+            Random.Range(minScaleRangeMin.y, minScaleRangeMax.y),
+            Random.Range(minScaleRangeMin.z, minScaleRangeMax.z)
+        );
+    }
 
     private void Update()
     {
@@ -51,7 +65,7 @@ public class ButterMelt : MonoBehaviour
 
         // 執行融化縮小
         Vector3 currentScale = transform.localScale;
-        Vector3 newScale = Vector3.MoveTowards(currentScale, minScale, meltSpeed * Time.deltaTime);
+        Vector3 newScale = Vector3.MoveTowards(currentScale, targetScale, meltSpeed * Time.deltaTime);
         float deltaScaleY = currentScale.y - newScale.y;
 
         // 更新縮放
@@ -63,8 +77,8 @@ public class ButterMelt : MonoBehaviour
             transform.position -= new Vector3(0f, deltaScaleY * 0.5f, 0f);
         }
 
-        // 檢查各軸是否均已達到融化下限
-        if (transform.localScale == minScale)
+        // 檢查各軸是否均已達到融化目標值
+        if (transform.localScale == targetScale)
         {
             isMelted = true;
         }
