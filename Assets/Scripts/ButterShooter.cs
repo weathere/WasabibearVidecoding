@@ -35,14 +35,14 @@ public class ButterShooter : MonoBehaviour
             return;
         }
 
-        // 在發射點生成奶油實例
+        // 在發射點生成奶油實例，並使用 spawnPoint 的旋轉
         GameObject butterInstance = Instantiate(butterPrefab, spawnPoint.position, spawnPoint.rotation);
 
         // 取得 Rigidbody2D 組件並施加推力
         Rigidbody2D rb = butterInstance.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            // 朝發射點的右方 (向前面向) 施加瞬間推力
+            // 嚴格依照發射點當前的本地方向（右方）施加瞬間推力，使其隨旋轉角度改變
             rb.AddForce(spawnPoint.right * shootForce, ForceMode2D.Impulse);
         }
         else
