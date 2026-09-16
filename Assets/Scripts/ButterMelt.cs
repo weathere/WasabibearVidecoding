@@ -13,6 +13,7 @@ public class ButterMelt : MonoBehaviour
     [Tooltip("融化速度 (縮小 localScale.y 的速度)")]
     [SerializeField] private float meltSpeed = 0.5f;
 
+    [Header("目標縮放範圍 (Inspector 可調整)")]
     [Tooltip("融化後的最小縮放值範圍 (最小值)")]
     [SerializeField] private Vector3 minScaleRangeMin = new Vector3(1f, 0.05f, 1f);
 
@@ -27,7 +28,7 @@ public class ButterMelt : MonoBehaviour
 
     private void Start()
     {
-        // 在設定的範圍內隨機決定各軸融化的目標值
+        // 在 Inspector 設定的範圍內隨機決定各軸融化的目標值
         targetScale = new Vector3(
             Random.Range(minScaleRangeMin.x, minScaleRangeMax.x),
             Random.Range(minScaleRangeMin.y, minScaleRangeMax.y),
