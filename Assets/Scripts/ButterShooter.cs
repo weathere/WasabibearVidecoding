@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// 奶油發射器，負責在按下空白鍵時生成並發射奶油
+/// 奶油發射器，負責在按住發射鍵時持續連發奶油
 /// </summary>
 public class ButterShooter : MonoBehaviour
 {
@@ -15,12 +15,27 @@ public class ButterShooter : MonoBehaviour
     [Tooltip("發射推力大小")]
     [SerializeField] private float shootForce = 10f;
 
+    [Tooltip("連發間隔時間 (秒)")]
+    [SerializeField] private float fireInterval = 0.2f;
+
+    private float fireTimer = 0f;
+
     private void Update()
     {
-        // 偵測是否按下空白鍵
-        if (Input.GetKeyDown(KeyCode.Space))
+        // 偵測是否持續按住空白鍵
+        if (Input.GetKey(KeyCode.Space))
         {
-            ShootButter();
+            fireTimer += Time.deltaTime;
+            if (fireTimer >= fireInterval)
+            {
+                fireTimer = 0f;
+                ShootButter();
+            }
+        }
+        else
+        {
+            // 當放開按鍵時，重置計時器以便下次按下時能立刻發射第一發
+            fireTimer = fireInterval;
         }
     }
 
