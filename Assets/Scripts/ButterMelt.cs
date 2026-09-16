@@ -51,15 +51,6 @@ public class ButterMelt : MonoBehaviour
             if (timer >= meltDelay)
             {
                 isMelting = true;
-
-                // 開始融化時將剛體設為靜態或暫停運動，避免物理碰撞干擾位移
-                Rigidbody2D rb = GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    rb.linearVelocity = Vector2.zero;
-                    rb.angularVelocity = 0f;
-                    rb.bodyType = RigidbodyType2D.Kinematic;
-                }
             }
             return;
         }
