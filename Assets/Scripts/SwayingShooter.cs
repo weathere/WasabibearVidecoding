@@ -1,19 +1,13 @@
 using UnityEngine;
 
 /// <summary>
-/// 可以在設定的角度範圍內來回擺動，並支援左右來回移動的發射器
+/// 可以持續進行順時針旋轉，並支援左右來回移動的發射器
 /// </summary>
 public class SwayingShooter : MonoBehaviour
 {
-    [Header("擺動設定")]
-    [Tooltip("最小擺動角度 (度)")]
-    [SerializeField] private float minAngle = -45f;
-
-    [Tooltip("最大擺動角度 (度)")]
-    [SerializeField] private float maxAngle = 45f;
-
-    [Tooltip("擺動速度")]
-    [SerializeField] private float swaySpeed = 2f;
+    [Header("旋轉設定")]
+    [Tooltip("順時針旋轉速率 (度/秒)")]
+    [SerializeField] private float rotationSpeed = 90f;
 
     [Header("移動設定")]
     [Tooltip("是否啟用左右來回移動")]
@@ -25,7 +19,6 @@ public class SwayingShooter : MonoBehaviour
     [Tooltip("左右移動的速度")]
     [SerializeField] private float moveSpeed = 2f;
 
-    private float timeElapsed = 0f;
     private float moveTimeElapsed = 0f;
     private Vector3 initialPosition;
 
@@ -36,7 +29,7 @@ public class SwayingShooter : MonoBehaviour
 
     private void Update()
     {
-        Sway();
+        RotateClockwise();
         if (enableMove)
         {
             MoveHorizontally();
@@ -44,18 +37,12 @@ public class SwayingShooter : MonoBehaviour
     }
 
     /// <summary>
-    /// 控制發射器在指定角度範圍內來回擺動
+    /// 控制發射器持續進行順時針旋轉
     /// </summary>
-    private void Sway()
+    private void RotateClockwise()
     {
-        timeElapsed += Time.deltaTime * swaySpeed;
-        
-        // 使用 Mathf.PingPong 讓數值在 0 到 (maxAngle - minAngle) 之間來回變化
-        float angleRange = maxAngle - minAngle;
-        float currentAngle = minAngle + Mathf.PingPong(timeElapsed * 10f * swaySpeed, angleRange);
-
-        // 套用旋轉到 Z 軸 (適用於 2D)
-        transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
+        // 順時針旋轉使用負的 Z 軸角度 (Unity 中正轉為逆時針)
+        transform.Rotate(0f, 0f, -rotationSpeed * Time.deltaTime);
     }
 
     /// <summary>
