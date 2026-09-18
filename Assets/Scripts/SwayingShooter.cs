@@ -1,60 +1,60 @@
 using UnityEngine;
 
 /// <summary>
-/// 可以持續進行順時針旋轉，並支援左右來回移動的發射器
+/// 保持旋轉固定，並讓物件位置進行順時針環繞位移的發射器
 /// </summary>
 public class SwayingShooter : MonoBehaviour
 {
-    [Header("旋轉設定")]
-    [Tooltip("順時針旋轉速率 (度/秒)")]
-    [SerializeField] private float rotationSpeed = 90f;
+    [Header("位置順時針環繞設定")]
+    [Tooltip("是否啟用順時針位移環繞")]
+    [SerializeField] private bool enableOrbit = true;
 
-    [Header("移動設定")]
-    [Tooltip("是否啟用左右來回移動")]
-    [SerializeField] private bool enableMove = false;
+    [Tooltip("環繞半徑 (位移距離)")]
+    [SerializeField] private float orbitRadius = 2f;
 
-    [Tooltip("左右移動的最大距離 (從初始位置起算的一側距離)")]
-    [SerializeField] private float moveDistance = 2f;
+    [Tooltip("環繞速率 (度/秒)")]
+    [SerializeField] private float orbitSpeed = 90f;
 
-    [Tooltip("左右移動的速度")]
-    [SerializeField] private float moveSpeed = 2f;
-
-    private float moveTimeElapsed = 0f;
-    private Vector3 initialPosition;
+    private Vector3 centerPosition;
+    private float currentAngle = 0f;
+    private Quaternion initialRotation;
 
     private void Start()
     {
-        initialPosition = transform.position;
+        centerPosition = transform.position;
+        initialRotation = transform.rotation;
     }
 
     private void Update()
     {
-        RotateClockwise();
-        if (enableMove)
+        if (enableOrbit)
         {
-            MoveHorizontally();
+            OrbitClockwise();
         }
-    }
-
-    /// <summary>
-    /// 控制發射器持續進行順時針旋轉
-    /// </summary>
-    private void RotateClockwise()
-    {
-        // 順時針旋轉使用負的 Z 軸角度 (Unity 中正轉為逆時針)
-        transform.Rotate(0f, 0f, -rotationSpeed * Time.deltaTime);
-    }
-
-    /// <summary>
-    /// 控制發射器左右來回移動
-    /// </summary>
-    private void MoveHorizontally()
-    {
-        moveTimeElapsed += Time.deltaTime * moveSpeed;
-
-        // 使用 PingPong 讓 X 軸座標在 -moveDistance 到 +moveDistance 之間來回擺動
-        float xOffset = Mathf.PingPong(moveTimeElapsed * moveSpeed, moveDistance * 2f) - moveDistance;
         
-        transform.position = new Vector3(initialPosition.x + xOffset, initialPosition.y, initialPosition.z);
+        // 確保旋轉角度保持不變
+        transform.rotation = initialRotation;
+    }
+
+    /// <summary>
+    /// 控制發射器位置進行順時針環繞位移
+    /// </summary>
+    private void OrbitClockwise()
+    {
+        // 順時針方向：角度隨時間遞減
+        currentAngle -= orbitSpeed * Time.deltaTime;
+        
+        // 避免數值過大
+        if (currentAngle <= -360f)
+        {
+            currentAngle += 360f;
+        }
+
+        float rad = currentAngle * Mathf.Deg2Rad;
+
+        float x = centerPosition.x + Mathf.Cos(rad) * orbitRadius;
+        float y = centerPosition.y + Mathf.Sin(rad) * orbitRadius;
+
+        transform.position = new Vector3(x, y, centerPosition.z);
     }
 }
