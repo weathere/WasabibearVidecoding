@@ -13,8 +13,13 @@ public class Food : MonoBehaviour
     [Tooltip("變形與恢復動畫的總時間長度 (秒)")]
     [SerializeField] private float duration = 0.2f;
 
+    [Header("冷卻設定 (避免重複觸發)")]
+    [Tooltip("動畫觸發後的冷卻時間 (秒)，在此期間內不會重複觸發變形")]
+    [SerializeField] private float squashCooldown = 0.3f;
+
     private Vector3 originalScale;
     private Coroutine squashCoroutine;
+    private float nextTriggerTime = 0f;
 
     private void Start()
     {
@@ -26,7 +31,7 @@ public class Food : MonoBehaviour
         // 檢查是否碰到奶油 (透過名稱判斷，或可改用 Tag)
         if (collision.gameObject.name.ToLower().Contains("butter"))
         {
-            TriggerSquash();
+            TryTriggerSquash();
         }
     }
 
@@ -34,12 +39,24 @@ public class Food : MonoBehaviour
     {
         if (other.gameObject.name.ToLower().Contains("butter"))
         {
+            TryTriggerSquash();
+        }
+    }
+
+    /// <summary>
+    /// 檢查冷卻時間並嘗試觸發擠壓變形效果
+    /// </summary>
+    private void TryTriggerSquash()
+    {
+        if (Time.time >= nextTriggerTime)
+        {
+            nextTriggerTime = Time.time + squashCooldown;
             TriggerSquash();
         }
     }
 
     /// <summary>
-    /// 觸發擠壓變形效果
+    /// 強制觸發擠壓變形效果
     /// </summary>
     public void TriggerSquash()
     {
@@ -59,7 +76,6 @@ public class Food : MonoBehaviour
             originalScale.z * squashScale.z
         );
 
-        halfDuration:
         float halfDuration = duration / 2f;
 
         // 變形過程
