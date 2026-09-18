@@ -91,6 +91,13 @@ public class ButterMelt : MonoBehaviour
         if (!hasCollided)
         {
             hasCollided = true;
+
+            // 關閉 TrailRenderer 的 emitting，讓尾巴不再繼續產生並自然消散
+            TrailRenderer trail = GetComponent<TrailRenderer>();
+            if (trail != null)
+            {
+                trail.emitting = false;
+            }
         }
     }
 }
