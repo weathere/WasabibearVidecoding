@@ -11,8 +11,22 @@ public class StartMenuManager : MonoBehaviour
     [Header("UI Groups")]
     public GameObject chooseFoodGroup;
 
+    private bool hasStarted = false;
+
+    private void Update()
+    {
+        // 檢查是否點擊畫面的任何地方（滑鼠左鍵點擊 或 螢幕觸控）
+        if (!hasStarted && (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)))
+        {
+            StartGame();
+        }
+    }
+
     public void StartGame()
     {
+        if (hasStarted) return;
+        hasStarted = true;
+
         if (animUp != null)
             animUp.Play("UpAnimationName");
         
