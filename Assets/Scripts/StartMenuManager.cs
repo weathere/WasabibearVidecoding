@@ -27,17 +27,20 @@ public class StartMenuManager : MonoBehaviour
         if (hasStarted) return;
         hasStarted = true;
 
+        // 觸發狀態機切換到離場動畫 (請確認你的 Animator Controller 裡有這個 Trigger 名稱，若不是請替換)
+        string triggerName = "TriggerExit";
+
         if (animUp != null)
-            animUp.Play("UpAnimationName");
+            animUp.SetTrigger(triggerName);
         
         if (animDown != null)
-            animDown.Play("DownAnimationName");
+            animDown.SetTrigger(triggerName);
         
         if (animLeft != null)
-            animLeft.Play("LeftAnimationName");
+            animLeft.SetTrigger(triggerName);
         
         if (animRight != null)
-            animRight.Play("RightAnimationName");
+            animRight.SetTrigger(triggerName);
 
         if (chooseFoodGroup != null)
             chooseFoodGroup.SetActive(true);
