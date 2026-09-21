@@ -7,6 +7,7 @@ public class StartMenuManager : MonoBehaviour
     public Animator animDown;
     public Animator animLeft;
     public Animator animRight;
+    public Animator animUI;
 
     [Header("UI Groups")]
     public GameObject chooseFoodGroup;
@@ -41,6 +42,9 @@ public class StartMenuManager : MonoBehaviour
         
         if (animRight != null)
             animRight.SetTrigger(triggerName);
+
+        if (animUI != null)
+            animUI.SetTrigger(triggerName);
 
         if (chooseFoodGroup != null)
             chooseFoodGroup.SetActive(true);
