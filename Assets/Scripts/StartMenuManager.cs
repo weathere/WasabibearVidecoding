@@ -15,6 +15,7 @@ public class StartMenuManager : MonoBehaviour
 
     [Header("Settings")]
     public float transitionDelay = 1.0f;
+    public float handInAnimationDuration = 1.0f; // 手部進場動畫的時間長度
 
     [Header("UI Groups")]
     public GameObject chooseFoodGroup;
@@ -69,7 +70,25 @@ public class StartMenuManager : MonoBehaviour
         if (GreenBear != null)
             GreenBear.SetTrigger("TriggerEnter");
 
+        MonoBehaviour swayingShooter = null;
         if (Handin != null)
+        {
             Handin.SetTrigger("TriggerEnter");
+            // 嘗試取得 Handin 物件上的 SwayingShooter 腳本（假設其型態名稱為 SwayingShooter）
+            swayingShooter = Handin.GetComponent("SwayingShooter") as MonoBehaviour;
+            if (swayingShooter != null)
+            {
+                swayingShooter.enabled = false; // 動畫播放期間先關閉
+            }
+        }
+
+        // 等待手部動畫播放完畢
+        yield return new WaitForSeconds(handInAnimationDuration);
+
+        // 動畫結束後啟用 SwayingShooter
+        if (swayingShooter != null)
+        {
+            swayingShooter.enabled = true;
+        }
     }
 }
