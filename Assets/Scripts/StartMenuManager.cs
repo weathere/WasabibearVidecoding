@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class StartMenuManager : MonoBehaviour
@@ -8,6 +9,10 @@ public class StartMenuManager : MonoBehaviour
     public Animator animLeft;
     public Animator animRight;
     public Animator animUI;
+    public Animator animFoodEnter;
+
+    [Header("Settings")]
+    public float transitionDelay = 1.0f;
 
     [Header("UI Groups")]
     public GameObject chooseFoodGroup;
@@ -46,7 +51,17 @@ public class StartMenuManager : MonoBehaviour
         if (animUI != null)
             animUI.SetTrigger(triggerName);
 
+        StartCoroutine(TransitionToNextScene());
+    }
+
+    private IEnumerator TransitionToNextScene()
+    {
+        yield return new WaitForSeconds(transitionDelay);
+
         if (chooseFoodGroup != null)
             chooseFoodGroup.SetActive(true);
+
+        if (animFoodEnter != null)
+            animFoodEnter.SetTrigger("TriggerEnter");
     }
 }
