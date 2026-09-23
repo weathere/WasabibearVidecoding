@@ -13,6 +13,9 @@ public class StartMenuManager : MonoBehaviour
     public Animator GreenBear;
     public Animator Handin;
 
+    [Header("Components")]
+    public MonoBehaviour swayingShooterScript; // 讓你在 Inspector 中直接指定掛載 SwayingShooter 的物件
+
     [Header("Settings")]
     public float transitionDelay = 1.0f;
     public float handInAnimationDuration = 1.0f; // 手部進場動畫的時間長度
@@ -70,25 +73,24 @@ public class StartMenuManager : MonoBehaviour
         if (GreenBear != null)
             GreenBear.SetTrigger("TriggerEnter");
 
-        MonoBehaviour swayingShooter = null;
         if (Handin != null)
         {
             Handin.SetTrigger("TriggerEnter");
-            // 嘗試取得 Handin 物件上的 SwayingShooter 腳本（假設其型態名稱為 SwayingShooter）
-            swayingShooter = Handin.GetComponent("SwayingShooter") as MonoBehaviour;
-            if (swayingShooter != null)
-            {
-                swayingShooter.enabled = false; // 動畫播放期間先關閉
-            }
+        }
+
+        // 動畫播放期間先關閉 SwayingShooter
+        if (swayingShooterScript != null)
+        {
+            swayingShooterScript.enabled = false;
         }
 
         // 等待手部動畫播放完畢
         yield return new WaitForSeconds(handInAnimationDuration);
 
         // 動畫結束後啟用 SwayingShooter
-        if (swayingShooter != null)
+        if (swayingShooterScript != null)
         {
-            swayingShooter.enabled = true;
+            swayingShooterScript.enabled = true;
         }
     }
 }
