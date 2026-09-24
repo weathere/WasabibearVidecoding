@@ -23,7 +23,7 @@ public class FoodSwipeController : MonoBehaviour
 
     private void Update()
     {
-        if (isLocked) return;
+        //if (isLocked) return;
 
         HandleInput();
 
