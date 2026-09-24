@@ -14,6 +14,7 @@ public class FoodSwipeController : MonoBehaviour
     private Camera mainCamera;
     public Transform targetSnapObject;
     private bool isSnapping = false;
+    private bool isLocked = false;
 
     private void Start()
     {
@@ -22,6 +23,8 @@ public class FoodSwipeController : MonoBehaviour
 
     private void Update()
     {
+        if (isLocked) return;
+
         HandleInput();
 
         if (isSnapping && targetSnapObject != null)
@@ -46,6 +49,7 @@ public class FoodSwipeController : MonoBehaviour
 
     private void HandleInput()
     {
+        if (isLocked) return;
         if (foodContainer == null) return;
 
         // 偵測滑鼠按下或手機觸控開始
@@ -140,8 +144,8 @@ public class FoodSwipeController : MonoBehaviour
             mainGameUIGroup.SetActive(true);
         }
 
-        // 鎖定操作：關閉此滑動腳本
-        this.enabled = false;
+        // 鎖定操作：改用 isLocked 變數鎖定輸入
+        isLocked = true;
     }
 
     private IEnumerator FadeOutFood(GameObject foodObj)
