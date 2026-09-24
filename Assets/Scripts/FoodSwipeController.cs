@@ -7,6 +7,7 @@ public class FoodSwipeController : MonoBehaviour
     public float snapSpeed = 10f;
     public GameObject mainGameUIGroup;
     public float fadeDuration = 0.5f;
+    public float entranceDelay = 1.5f;
 
     private bool isDragging = false;
     private Vector3 dragStartMousePos;
@@ -19,6 +20,7 @@ public class FoodSwipeController : MonoBehaviour
     private void Start()
     {
         mainCamera = Camera.main;
+        StartCoroutine(UnlockInputAfterDelay());
     }
 
     private void Update()
@@ -187,5 +189,12 @@ public class FoodSwipeController : MonoBehaviour
         {
             GameManager.Instance.StartGameFlow();
         }
+    }
+
+    private IEnumerator UnlockInputAfterDelay()
+    {
+        isLocked = true; // 遊戲一開始先強制鎖住，不讓玩家滑動或點擊
+        yield return new WaitForSeconds(entranceDelay); // 等待動畫播完
+        isLocked = false; // 動畫結束，開放玩家操作
     }
 }
