@@ -13,6 +13,7 @@ public class FoodSwipeController : MonoBehaviour
     public GameObject countdownUIGroup;
     public TMP_Text countdownText;
     public GameObject gameplayUI;
+    public float textPopScale = 3f;
 
     private bool isDragging = false;
     private Vector3 dragStartMousePos;
@@ -193,20 +194,19 @@ public class FoodSwipeController : MonoBehaviour
             countdownText.color = new Color(col.r, col.g, col.b, 1f);
 
             Transform textTransform = countdownText.transform;
-            textTransform.localScale = new Vector3(5f, 5f, 5f);
+            Vector3 originalScale = textTransform.localScale;
 
-            // 階段 1：砸下縮放 (0.2 秒內從 10 縮小到 1)
+            // 階段 1：砸下縮放 (0.2 秒內從 originalScale * textPopScale 縮小到 originalScale)
             float scaleDuration = 0.2f;
             float elapsed = 0f;
             while (elapsed < scaleDuration)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / scaleDuration;
-                float currentScale = Mathf.Lerp(10f, 1f, t);
-                textTransform.localScale = new Vector3(currentScale, currentScale, currentScale);
+                textTransform.localScale = Vector3.Lerp(originalScale * textPopScale, originalScale, t);
                 yield return null;
             }
-            textTransform.localScale = Vector3.one;
+            textTransform.localScale = originalScale;
 
             // 階段 2：停留 (0.5 秒)
             yield return new WaitForSeconds(0.5f);
