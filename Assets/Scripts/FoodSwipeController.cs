@@ -195,14 +195,14 @@ public class FoodSwipeController : MonoBehaviour
             Transform textTransform = countdownText.transform;
             textTransform.localScale = new Vector3(5f, 5f, 5f);
 
-            // 階段 1：砸下縮放 (0.2 秒內從 5 縮小到 1)
+            // 階段 1：砸下縮放 (0.2 秒內從 10 縮小到 1)
             float scaleDuration = 0.2f;
             float elapsed = 0f;
             while (elapsed < scaleDuration)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / scaleDuration;
-                float currentScale = Mathf.Lerp(5f, 1f, t);
+                float currentScale = Mathf.Lerp(10f, 1f, t);
                 textTransform.localScale = new Vector3(currentScale, currentScale, currentScale);
                 yield return null;
             }
@@ -240,7 +240,7 @@ public class FoodSwipeController : MonoBehaviour
         yield return StartCoroutine(AnimateCountdownText("3"));
         yield return StartCoroutine(AnimateCountdownText("2"));
         yield return StartCoroutine(AnimateCountdownText("1"));
-        yield return StartCoroutine(AnimateCountdownText("START!"));
+        yield return StartCoroutine(AnimateCountdownText("START"));
 
         // 倒數結束，切換介面
         if (countdownUIGroup != null)
