@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using TMPro;
 
 public class FoodSwipeController : MonoBehaviour
 {
@@ -8,12 +7,6 @@ public class FoodSwipeController : MonoBehaviour
     public float snapSpeed = 10f;
     public GameObject mainGameUIGroup;
     public float fadeDuration = 0.5f;
-
-    [Header("Countdown Settings")]
-    public GameObject countdownUIGroup;
-    public TMP_Text countdownText;
-    public GameObject gameplayUI;
-    public float textPopScale = 3f;
 
     private bool isDragging = false;
     private Vector3 dragStartMousePos;
@@ -156,8 +149,8 @@ public class FoodSwipeController : MonoBehaviour
         // 鎖定操作：改用 isLocked 變數鎖定輸入
         isLocked = true;
 
-        // 開始倒數計時與進入遊戲協程
-        StartCoroutine(GameStartSequence());
+        // 啟動協程等待置中後呼叫 GameManager 開始遊戲流程
+        StartCoroutine(WaitForSnapAndStartFlow());
     }
 
     private IEnumerator FadeOutFood(GameObject foodObj)
@@ -184,69 +177,15 @@ public class FoodSwipeController : MonoBehaviour
         foodObj.SetActive(false);
     }
 
-    private IEnumerator AnimateCountdownText(string textContent)
-    {
-        if (countdownText != null)
-        {
-            countdownText.text = textContent;
-            
-            Color col = countdownText.color;
-            countdownText.color = new Color(col.r, col.g, col.b, 1f);
-
-            Transform textTransform = countdownText.transform;
-            Vector3 originalScale = textTransform.localScale;
-
-            // 階段 1：砸下縮放 (0.2 秒內從 originalScale * textPopScale 縮小到 originalScale)
-            float scaleDuration = 0.2f;
-            float elapsed = 0f;
-            while (elapsed < scaleDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / scaleDuration;
-                textTransform.localScale = Vector3.Lerp(originalScale * textPopScale, originalScale, t);
-                yield return null;
-            }
-            textTransform.localScale = originalScale;
-
-            // 階段 2：停留 (0.5 秒)
-            yield return new WaitForSeconds(0.5f);
-
-            // 階段 3：漸隱消失 (0.3 秒內 alpha 從 1 變 0)
-            float fadeDurationText = 0.3f;
-            elapsed = 0f;
-            Color originalColor = countdownText.color;
-            while (elapsed < fadeDurationText)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / fadeDurationText;
-                float alpha = Mathf.Lerp(1f, 0f, t);
-                countdownText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-                yield return null;
-            }
-            countdownText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-        }
-    }
-
-    private IEnumerator GameStartSequence()
+    private IEnumerator WaitForSnapAndStartFlow()
     {
         // 等待托盤滑動置中
         yield return new WaitUntil(() => !isSnapping);
 
-        // 打開倒數畫面
-        if (countdownUIGroup != null)
-            countdownUIGroup.SetActive(true);
-
-        // 依序執行倒數文字特效
-        yield return StartCoroutine(AnimateCountdownText("3"));
-        yield return StartCoroutine(AnimateCountdownText("2"));
-        yield return StartCoroutine(AnimateCountdownText("1"));
-        yield return StartCoroutine(AnimateCountdownText("START"));
-
-        // 倒數結束，切換介面
-        if (countdownUIGroup != null)
-            countdownUIGroup.SetActive(false);
-
-        if (gameplayUI != null)
-            gameplayUI.SetActive(true);
+        // 呼叫 GameManager 發出開始遊戲訊號
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StartGameFlow();
+        }
     }
 }
