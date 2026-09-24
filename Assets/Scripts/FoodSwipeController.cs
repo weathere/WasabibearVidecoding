@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class FoodSwipeController : MonoBehaviour
@@ -5,6 +6,7 @@ public class FoodSwipeController : MonoBehaviour
     public Transform foodContainer;
     public float snapSpeed = 10f;
     public GameObject mainGameUIGroup;
+    public float fadeDuration = 0.5f;
 
     private bool isDragging = false;
     private Vector3 dragStartMousePos;
@@ -120,14 +122,14 @@ public class FoodSwipeController : MonoBehaviour
         isSnapping = true; // 讓托盤自動滑動對齊到被點擊的食物
         Debug.Log("玩家點擊並選擇了: " + targetSnapObject.name);
 
-        // 清場邏輯：隱藏其他未被選中的食物
+        // 漸隱清場邏輯：對其他未被選中的食物執行漸隱協程
         if (foodContainer != null)
         {
             foreach (Transform child in foodContainer)
             {
                 if (child != clickedFood)
                 {
-                    child.gameObject.SetActive(false);
+                    StartCoroutine(FadeOutFood(child.gameObject));
                 }
             }
         }
@@ -140,5 +142,29 @@ public class FoodSwipeController : MonoBehaviour
 
         // 鎖定操作：關閉此滑動腳本
         this.enabled = false;
+    }
+
+    private IEnumerator FadeOutFood(GameObject foodObj)
+    {
+        SpriteRenderer spriteRenderer = foodObj.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            Color startColor = spriteRenderer.color;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < fadeDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                float alpha = Mathf.Lerp(startColor.a, 0f, elapsedTime / fadeDuration);
+                spriteRenderer.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+                yield return null;
+            }
+
+            // 確保完全透明
+            spriteRenderer.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
+        }
+
+        // 漸隱完成後將物件隱藏
+        foodObj.SetActive(false);
     }
 }
