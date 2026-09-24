@@ -12,6 +12,7 @@ public class StartMenuManager : MonoBehaviour
     public Animator animFoodEnter;
     public Animator GreenBear;
     public Animator Handin;
+    public Animator UI_ChooseYourFood;
 
     [Header("Settings")]
     public float transitionDelay = 1.0f;
@@ -80,6 +81,9 @@ public class StartMenuManager : MonoBehaviour
 
         if (GreenBear != null)
             GreenBear.SetTrigger("TriggerEnter");
+
+        if (UI_ChooseYourFood != null)
+            UI_ChooseYourFood.SetTrigger("TriggerEnter");
 
         if (Handin != null)
         {

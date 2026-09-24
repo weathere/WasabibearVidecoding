@@ -14,14 +14,14 @@ public class WasabiStretch : MonoBehaviour
     void Update()
     {
         // 如果醬料在空中往下掉 (Y軸速度為負)
-        if (rb.velocity.y < -0.1f) 
+        if (rb.linearVelocity.y < -0.1f) 
         {
             // 將 Y 軸拉長，速度越快拉越長
-            float stretch = Mathf.Abs(rb.velocity.y) * 0.1f; 
+            float stretch = Mathf.Abs(rb.linearVelocity.y) * 0.1f; 
             transform.localScale = new Vector3(originalScale.x, originalScale.y + stretch, originalScale.z);
             
             // 讓圖片旋轉朝向掉落的方向
-            transform.up = rb.velocity; 
+            transform.up = rb.linearVelocity; 
         }
         else 
         {
