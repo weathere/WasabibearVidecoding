@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using TMPro;
 
 public class FoodSwipeController : MonoBehaviour
 {
@@ -7,6 +8,11 @@ public class FoodSwipeController : MonoBehaviour
     public float snapSpeed = 10f;
     public GameObject mainGameUIGroup;
     public float fadeDuration = 0.5f;
+
+    [Header("Countdown Settings")]
+    public GameObject countdownUIGroup;
+    public TMP_Text countdownText;
+    public GameObject gameplayUI;
 
     private bool isDragging = false;
     private Vector3 dragStartMousePos;
@@ -146,6 +152,9 @@ public class FoodSwipeController : MonoBehaviour
 
         // 鎖定操作：改用 isLocked 變數鎖定輸入
         isLocked = true;
+
+        // 開始倒數計時與進入遊戲協程
+        StartCoroutine(GameStartSequence());
     }
 
     private IEnumerator FadeOutFood(GameObject foodObj)
@@ -170,5 +179,35 @@ public class FoodSwipeController : MonoBehaviour
 
         // 漸隱完成後將物件隱藏
         foodObj.SetActive(false);
+    }
+
+    private IEnumerator GameStartSequence()
+    {
+        // 等待托盤滑動置中
+        yield return new WaitUntil(() => !isSnapping);
+
+        // 打開倒數畫面
+        if (countdownUIGroup != null)
+            countdownUIGroup.SetActive(true);
+
+        // 開始倒數
+        if (countdownText != null) countdownText.text = "3";
+        yield return new WaitForSeconds(1f);
+
+        if (countdownText != null) countdownText.text = "2";
+        yield return new WaitForSeconds(1f);
+
+        if (countdownText != null) countdownText.text = "1";
+        yield return new WaitForSeconds(1f);
+
+        if (countdownText != null) countdownText.text = "START!";
+        yield return new WaitForSeconds(1f);
+
+        // 倒數結束，切換介面
+        if (countdownUIGroup != null)
+            countdownUIGroup.SetActive(false);
+
+        if (gameplayUI != null)
+            gameplayUI.SetActive(true);
     }
 }
