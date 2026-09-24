@@ -181,6 +181,50 @@ public class FoodSwipeController : MonoBehaviour
         foodObj.SetActive(false);
     }
 
+    private IEnumerator AnimateCountdownText(string textContent)
+    {
+        if (countdownText != null)
+        {
+            countdownText.text = textContent;
+            
+            Color col = countdownText.color;
+            countdownText.color = new Color(col.r, col.g, col.b, 1f);
+
+            Transform textTransform = countdownText.transform;
+            textTransform.localScale = new Vector3(5f, 5f, 5f);
+
+            // 階段 1：砸下縮放 (0.2 秒內從 5 縮小到 1)
+            float scaleDuration = 0.2f;
+            float elapsed = 0f;
+            while (elapsed < scaleDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / scaleDuration;
+                float currentScale = Mathf.Lerp(5f, 1f, t);
+                textTransform.localScale = new Vector3(currentScale, currentScale, currentScale);
+                yield return null;
+            }
+            textTransform.localScale = Vector3.one;
+
+            // 階段 2：停留 (0.5 秒)
+            yield return new WaitForSeconds(0.5f);
+
+            // 階段 3：漸隱消失 (0.3 秒內 alpha 從 1 變 0)
+            float fadeDurationText = 0.3f;
+            elapsed = 0f;
+            Color originalColor = countdownText.color;
+            while (elapsed < fadeDurationText)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / fadeDurationText;
+                float alpha = Mathf.Lerp(1f, 0f, t);
+                countdownText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+                yield return null;
+            }
+            countdownText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+        }
+    }
+
     private IEnumerator GameStartSequence()
     {
         // 等待托盤滑動置中
@@ -190,18 +234,11 @@ public class FoodSwipeController : MonoBehaviour
         if (countdownUIGroup != null)
             countdownUIGroup.SetActive(true);
 
-        // 開始倒數
-        if (countdownText != null) countdownText.text = "3";
-        yield return new WaitForSeconds(1f);
-
-        if (countdownText != null) countdownText.text = "2";
-        yield return new WaitForSeconds(1f);
-
-        if (countdownText != null) countdownText.text = "1";
-        yield return new WaitForSeconds(1f);
-
-        if (countdownText != null) countdownText.text = "START!";
-        yield return new WaitForSeconds(1f);
+        // 依序執行倒數文字特效
+        yield return StartCoroutine(AnimateCountdownText("3"));
+        yield return StartCoroutine(AnimateCountdownText("2"));
+        yield return StartCoroutine(AnimateCountdownText("1"));
+        yield return StartCoroutine(AnimateCountdownText("START!"));
 
         // 倒數結束，切換介面
         if (countdownUIGroup != null)
