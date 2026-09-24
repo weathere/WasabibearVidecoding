@@ -127,6 +127,8 @@ public class FoodSwipeController : MonoBehaviour
 
     public void ConfirmSelection(Transform clickedFood)
     {
+        if (isLocked) return;
+
         // 更新當前選中目標為點擊的食物
         targetSnapObject = clickedFood;
         isSnapping = true; // 讓托盤自動滑動對齊到被點擊的食物
