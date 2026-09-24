@@ -20,6 +20,10 @@ public class GameManager : MonoBehaviour
     public GameObject gameplayUI;
     public float textPopScale = 3f;
 
+    [Header("Gameplay Start Settings")]
+    public Rigidbody2D wasabiCapRb; // 芥末蓋子的剛體
+    public MonoBehaviour[] gameScriptsToEnable; // 要啟動的遊戲腳本陣列
+
     private void Awake()
     {
         // 若已存在其他實例，則銷毀此重複物件
@@ -81,6 +85,26 @@ public class GameManager : MonoBehaviour
 
         if (gameplayUI != null)
             gameplayUI.SetActive(true);
+
+        // 讓芥末蓋子掉下來
+        if (wasabiCapRb != null)
+        {
+            wasabiCapRb.bodyType = RigidbodyType2D.Dynamic;
+        }
+
+        // 啟動所有指定的遊戲腳本
+        if (gameScriptsToEnable != null)
+        {
+            foreach (MonoBehaviour script in gameScriptsToEnable)
+            {
+                if (script != null)
+                {
+                    script.enabled = true;
+                }
+            }
+        }
+
+        // TODO: 啟動計時器
     }
 
     private IEnumerator AnimateCountdownText(string textContent)
