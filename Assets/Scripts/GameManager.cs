@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour
     public Rigidbody2D wasabiCapRb; // 芥末蓋子的剛體
     public MonoBehaviour[] gameScriptsToEnable; // 要啟動的遊戲腳本陣列
 
+    [Header("Timer & Game Over Settings")]
+    public TMP_Text timerText; // 計時器 UI
+    public float gameTime = 30f; // 遊戲總時間
+    private bool isGameActive = false; // 遊戲狀態鎖
+
     private void Awake()
     {
         // 若已存在其他實例，則銷毀此重複物件
@@ -44,9 +49,48 @@ public class GameManager : MonoBehaviour
         Debug.Log("Vibe Coding 環境設定成功！");
     }
 
+    private void Update()
+    {
+        if (!isGameActive) return;
+
+        gameTime -= Time.deltaTime;
+
+        if (timerText != null)
+        {
+            timerText.text = Mathf.CeilToInt(gameTime).ToString();
+        }
+
+        if (gameTime <= 0)
+        {
+            gameTime = 0f;
+            if (timerText != null)
+            {
+                timerText.text = "0";
+            }
+            GameOver();
+        }
+    }
+
     public void StartGameFlow()
     {
         StartCoroutine(GameStartSequence());
+    }
+
+    public void GameOver()
+    {
+        isGameActive = false;
+        Debug.Log("時間到！遊戲結束！");
+
+        if (gameScriptsToEnable != null)
+        {
+            foreach (MonoBehaviour script in gameScriptsToEnable)
+            {
+                if (script != null)
+                {
+                    script.enabled = false;
+                }
+            }
+        }
     }
 
     private IEnumerator GameStartSequence()
@@ -104,7 +148,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // TODO: 啟動計時器
+        // 啟動計時器與遊戲狀態
+        isGameActive = true;
     }
 
     private IEnumerator AnimateCountdownText(string textContent)
