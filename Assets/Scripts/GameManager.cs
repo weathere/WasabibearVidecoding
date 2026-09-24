@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Timer & Game Over Settings")]
     public TMP_Text timerText; // 計時器 UI
+    public CanvasGroup timerFadeGroup; // 計時器淡入控制群組
     public float gameTime = 30f; // 遊戲總時間
     private bool isGameActive = false; // 遊戲狀態鎖
 
@@ -123,12 +124,23 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(AnimateCountdownText("1"));
         yield return StartCoroutine(AnimateCountdownText("START"));
 
-        // 倒數結束，切換介面
+        // 倒數結束，關閉倒數 UI
         if (countdownUIGroup != null)
             countdownUIGroup.SetActive(false);
 
-        if (gameplayUI != null)
-            gameplayUI.SetActive(true);
+        // 計時器淡入效果
+        if (timerFadeGroup != null)
+        {
+            float elapsedTime = 0f;
+            float fadeTime = 0.5f; // 半秒內淡入
+            while (elapsedTime < fadeTime)
+            {
+                elapsedTime += Time.deltaTime;
+                timerFadeGroup.alpha = Mathf.Lerp(0f, 1f, elapsedTime / fadeTime);
+                yield return null;
+            }
+            timerFadeGroup.alpha = 1f; // 確保最後是完全不透明
+        }
 
         // 讓芥末蓋子掉下來
         if (wasabiCapRb != null)
