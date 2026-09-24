@@ -4,6 +4,7 @@ public class FoodSwipeController : MonoBehaviour
 {
     public Transform foodContainer;
     public float snapSpeed = 10f;
+    public GameObject mainGameUIGroup;
 
     private bool isDragging = false;
     private Vector3 dragStartMousePos;
@@ -118,5 +119,26 @@ public class FoodSwipeController : MonoBehaviour
         targetSnapObject = clickedFood;
         isSnapping = true; // 讓托盤自動滑動對齊到被點擊的食物
         Debug.Log("玩家點擊並選擇了: " + targetSnapObject.name);
+
+        // 清場邏輯：隱藏其他未被選中的食物
+        if (foodContainer != null)
+        {
+            foreach (Transform child in foodContainer)
+            {
+                if (child != clickedFood)
+                {
+                    child.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        // 顯示主遊戲介面
+        if (mainGameUIGroup != null)
+        {
+            mainGameUIGroup.SetActive(true);
+        }
+
+        // 鎖定操作：關閉此滑動腳本
+        this.enabled = false;
     }
 }
