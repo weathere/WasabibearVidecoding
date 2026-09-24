@@ -9,7 +9,7 @@ public class FoodSwipeController : MonoBehaviour
     private Vector3 dragStartMousePos;
     private Vector3 dragStartContainerPos;
     private Camera mainCamera;
-    private Transform targetSnapObject;
+    public Transform targetSnapObject;
     private bool isSnapping = false;
 
     private void Start()
@@ -102,5 +102,21 @@ public class FoodSwipeController : MonoBehaviour
 
         targetSnapObject = closest;
         isSnapping = true;
+    }
+
+    public void ConfirmSelection()
+    {
+        if (targetSnapObject != null)
+        {
+            Debug.Log("玩家選擇了: " + targetSnapObject.name);
+        }
+    }
+
+    public void ConfirmSelection(Transform clickedFood)
+    {
+        // 更新當前選中目標為點擊的食物
+        targetSnapObject = clickedFood;
+        isSnapping = true; // 讓托盤自動滑動對齊到被點擊的食物
+        Debug.Log("玩家點擊並選擇了: " + targetSnapObject.name);
     }
 }
